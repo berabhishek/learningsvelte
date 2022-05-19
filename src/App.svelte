@@ -1,8 +1,19 @@
 <script>
 	let store_icecreams = ["Vanilla", "Chocochip", "Mint Cookie", "Mango", "Caramel Salted"];
-	let store_scoops = [2,5,8,9];
-	let icecream = [];
-	let scoop = [];
+	let cart = {};
+	let icecreamselection = function (event) {
+		console.log(event.target.value);
+		if (event.target.checked) {
+			cart[event.target.value] = 1;
+		} else {
+			cart[event.target.value] = undefined;
+		}
+	}
+
+	let updateqty = function(event) {
+		let item = event.target.getAttribute("data-key");
+		cart[item] = event.target.value;
+	}
 	Array.prototype.smartJoin = function(sep=",") {
 		let ans = "";
 		if (this.length  === 1) {
@@ -12,26 +23,41 @@
 		ans += ` and ${this[this.length - 1]}`;
 		return ans
 	}
+
+	Object.prototype.smartJoin = function () {
+		let newarr = [];
+		Object.keys(this).forEach(item => {
+			let qty = this[item];
+			if (+qty > 0) {
+				newarr.push(`${this[item]} ${this[item] === 1 ? "scoop": "scoops"} of ${item}` );
+			} 
+		});
+		return newarr;
+		// return newarr.smartJoin(sep);
+	}
+
+
 </script>
 	<main>
 		<h2>Ice cream parlour:</h2>
 		<h3>Ice creams: </h3>
 		{#each store_icecreams as store_icecream}
-			<div class="lefttext">
-				<input type="checkbox" name="icecream" bind:group={icecream} value={store_icecream}/> {store_icecream}
+			<div class="icecream-div">
+				<div class="icecreamoption">
+					<input class="checkboxelement" type="checkbox" name="icecream"  on:change={icecreamselection} value={store_icecream}/> {store_icecream}
+				</div>
+				{#if cart[store_icecream] !== undefined} 
+					<div class="qtyoption">
+						<input class="inputelement" data-key={store_icecream} on:input={updateqty} type="number" value={cart[store_icecream]} />
+					</div>
+				{/if}
 			</div>
 		{/each}
-		<h3>Quantity: </h3>
-		{#each store_scoops as store_scoop, i}
-			<div class="lefttext">
-				<input type=checkbox name="scoop" bind:group={scoop} value={store_scoop}/> {store_scoop} {store_scoop === 1? "scoop": "scoops"}
-			</div>	
-		{/each}
-		{#if icecream.length > 0 && scoop.length > 0} 
+		
+		{#if cart.smartJoin().length > 0} 
 			<h3>
 				User wants
-				{scoop} {scoop === 1 ? "scoop": "scoops"} of 
-				{icecream.smartJoin(", ")}.
+				{cart.smartJoin().smartJoin(",")}.
 			</h3>
 		{/if}
 	</main>
@@ -44,10 +70,28 @@
 		margin: 0 auto;
 	}
 
-	.lefttext {
-		width: 130px;
+	.checkboxelement {
+		position: relative;
+	}
+	.icecream-div {
+		padding: 0px;
+		width: 300px;
+		height: 40px;
 		margin: auto;
 		text-align: left;
+	}
+	.icecreamoption {
+		text-align: left;
+		height: 100%;
+		width: 60%;
+		float: left;
+	
+	}
+
+	.qtyoption {
+		width: 35%;
+		height: 100%;
+		float: left;
 	}
 
 	h1 {
