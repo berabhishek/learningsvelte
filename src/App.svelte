@@ -2,7 +2,6 @@
 	let store_icecreams = ["Vanilla", "Chocochip", "Mint Cookie", "Mango", "Caramel Salted"];
 	let cart = {};
 	let icecreamselection = function (event) {
-		console.log(event.target.value);
 		if (event.target.checked) {
 			cart[event.target.value] = 1;
 		} else {
@@ -33,7 +32,6 @@
 			} 
 		});
 		return newarr;
-		// return newarr.smartJoin(sep);
 	}
 
 
@@ -57,7 +55,7 @@
 		{#if cart.smartJoin().length > 0} 
 			<h3>
 				User wants
-				{cart.smartJoin().smartJoin(",")}.
+				{cart.smartJoin().smartJoin(", ")}.
 			</h3>
 		{/if}
 	</main>
